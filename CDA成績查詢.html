@@ -2,252 +2,85 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>成績查詢系統</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- PWA必要設定 -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="成績查詢系統">
-  <link rel="apple-touch-icon" href="https://duyn491kcolsw.cloudfront.net/files/1q/1q7/1q7qqu.ico?ph=0a5327dc56">
-
+  <title>登入</title>
   <style>
     body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-
-    /* 啟動畫面 */
-    #splash {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, #f2f2f2, #ffffff);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      z-index: 9999; opacity: 1;
-      transition: opacity 0.8s ease;
-    }
-    #splash.fade-out { opacity: 0; pointer-events: none; }
-    #splash img { max-width: 120px; margin-bottom: 20px; }
-    #splash h1 { margin: 0; font-size: 24px; color: #333; }
-    #splash p { margin: 5px 0 10px; font-size: 16px; color: gray; }
-    .loading { display: flex; gap: 8px; margin-top: 5px; }
-    .dot {
-      width: 10px; height: 10px;
-      background-color: #555; border-radius: 50%;
-      animation: blink 1s infinite;
-    }
-    .dot:nth-child(2){ animation-delay:0.2s;}
-    .dot:nth-child(3){ animation-delay:0.4s;}
-    @keyframes blink{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
-
-    /* 登入畫面 */
-    #login-page {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center;
-      color: #fff;
-      backdrop-filter: brightness(0.9);
-      width: 100%;
-      height: 100%;
-    }
-
-    .login-card {
-      background: rgba(255, 255, 255, 0.9);
+    .login-container {
+      background: #fff;
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      max-width: 320px;
-      width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 320px;
       text-align: center;
     }
-
-    .login-card h2 {
-      color: #333;
+    .login-container h2 {
       margin-bottom: 20px;
-      font-size: 22px;
     }
-
-    .login-card input {
-      display: block;
-      margin: 10px auto;
-      padding: 12px;
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
       width: 100%;
+      padding: 10px;
+      margin: 8px 0;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-      box-sizing: border-box;
+      border-radius: 6px;
     }
-
-    .checkbox-row {
+    .checkbox-container {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin: 10px 0 20px;
-      font-size: 14px;
-      color: #333;
-      justify-content: flex-start; /*靠左對齊*/
-      width: 100%;
-    }
-
-    .login-card button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #0078d7;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background 0.3s;
-    }
-    .login-card button:hover { background: #005fa3; }
-
-    /* 登入後頁面 */
-    #dashboard {
-      display: none; flex-direction: column;
-      padding: 20px; background: #fff; height: 100vh;
-      width: 100%;
-    }
-    #dashboard h2 { margin: 0 0 10px 0; }
-    #lastLogin {
-      font-size: 14px;
-      color: #555;
+      justify-content: flex-start; /* 這行讓勾選框靠左 */
+      margin-top: 8px;
       margin-bottom: 10px;
     }
-    .exam {
-      margin: 10px 0; border: 1px solid #ddd;
-      border-radius: 8px; overflow: hidden;
+    .checkbox-container input {
+      margin-right: 8px;
     }
-    .exam summary {
-      background: #f5f5f5; padding: 10px;
-      cursor: pointer; font-weight: bold;
-    }
-    .exam p { margin: 10px; }
-
-    /* 登出按鈕 */
-    #logout-btn {
-      margin-top: auto;
-      padding: 12px 20px;
+    .login-container button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
       border: none;
-      border-radius: 8px;
-      background: #e74c3c;
-      color: #fff;
-      font-size: 16px;
+      border-radius: 6px;
       cursor: pointer;
-      align-self: flex-start;
-      transition: background 0.3s;
+      width: 100%;
     }
-    #logout-btn:hover { background: #c0392b; }
+    .last-login {
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: #555;
+      text-align: left; /* 讓下方顯示時間靠左 */
+    }
   </style>
 </head>
 <body>
-  <!-- 啟動畫面 -->
-  <div id="splash">
-    <img src="https://duyn491kcolsw.cloudfront.net/files/20/20o/20oevo.svg?ph=0a5327dc56&amp;border=858585&amp;outline=666666&amp;color=585858" alt="Logo">
-    <h1>成績查詢系統</h1>
-    <p>v1.10.0</p>
-    <div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-  </div>
+  <div class="login-container">
+    <h2>登入系統</h2>
+    <input type="text" placeholder="帳號">
+    <input type="password" placeholder="密碼">
 
-  <!-- 登入頁 -->
-  <div id="login-page">
-    <div class="login-card">
-      <h2>歡迎使用成績查詢系統</h2>
-      <input type="text" id="studentId" placeholder="學號">
-      <input type="password" id="password" placeholder="密碼">
-      <div class="checkbox-row">
-        <input type="checkbox" id="rememberMe">
-        <label for="rememberMe">保持登入</label>
-      </div>
-      <button onclick="login()">登入</button>
+    <!-- 保持登入勾選框 -->
+    <div class="checkbox-container">
+      <input type="checkbox" id="remember">
+      <label for="remember">保持登入</label>
     </div>
-  </div>
 
-  <!-- 登入後頁 -->
-  <div id="dashboard">
-    <h2 id="welcome"></h2>
-    <div id="lastLogin"></div>
-    <p>注意！本系統只會保留當期課程成績！</p>
-    <details class="exam"><summary>德文第一次段考</summary><p id="exam1"></p></details>
-    <details class="exam"><summary>德文第二次段考</summary><p id="exam2"></p></details>
-    <details class="exam"><summary>德文第三次段考</summary><p id="exam3"></p></details>
-    <details class="exam"><summary>德文第四次段考</summary><p id="exam4"></p></details>
-    <button id="logout-btn" onclick="logout()">登出</button>
+    <button>登入</button>
+
+    <!-- 上次登入時間顯示在登入框下方 -->
+    <div class="last-login" id="lastLogin"></div>
   </div>
 
   <script>
-    // splash 淡出
-    setTimeout(() => {
-      document.getElementById('splash').classList.add('fade-out');
-      setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 800);
-    }, 3000);
-
-    // 學生資料
-    const students = {
-      "11401": { name: "蔡馥卉", password: "11401", scores: ["尚無成績", "尚無成績", "查無此項目", "查無此項目"] },
-      "11402": { name: "蔡馥如", password: "11402", scores: ["尚無成績", "尚無成績", "查無此項目", "查無此項目"] },
-      "11403": { name: "陳禹寧", password: "11403", scores: ["尚無成績", "尚無成績", "查無此項目", "查無此項目"] },
-      "11404": { name: "王定盛", password: "11404", scores: ["尚無成績", "尚無成績", "查無此項目", "查無此項目"] }
-    };
-
-    // 如果有localStorage 記錄
-    window.addEventListener("load", () => {
-      const savedId = localStorage.getItem("studentId");
-      if (savedId && students[savedId]) {
-        autoLogin(savedId);
-      }
-    });
-
-    function login() {
-      const id = document.getElementById("studentId").value.trim();
-      const pw = document.getElementById("password").value;
-      const remember = document.getElementById("rememberMe").checked;
-      if (students[id] && students[id].password === pw) {
-        if (remember) {
-          localStorage.setItem("studentId", id);
-          localStorage.setItem("lastLoginTime", new Date().toLocaleString());
-        }
-        showDashboard(id);
-      } else {
-        alert("學號或密碼錯誤！");
-      }
-    }
-
-    function autoLogin(id) {
-      showDashboard(id);
-    }
-
-    function showDashboard(id) {
-      // 顯示登入後畫面
-      document.body.style.background = "#fff";
-      document.getElementById("login-page").style.display = "none";
-      document.getElementById("dashboard").style.display = "flex";
-      document.getElementById("welcome").innerText = `${id} ${students[id].name} 您好，歡迎！`;
-      const lastTime = localStorage.getItem("lastLoginTime");
-      document.getElementById("lastLogin").innerText = lastTime ? `上次登入時間：${lastTime}` : "";
-      document.getElementById("exam1").innerText = students[id].scores[0] || "沒有成績";
-      document.getElementById("exam2").innerText = students[id].scores[1] || "沒有成績";
-      document.getElementById("exam3").innerText = students[id].scores[2] || "沒有成績";
-      document.getElementById("exam4").innerText = students[id].scores[3] || "沒有成績";
-    }
-
-    function logout() {
-      // 重置背景 & 回到登入頁
-      localStorage.removeItem("studentId");
-      //保留上次登入時間不刪除
-      document.body.style.background = 'url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover';
-      document.getElementById("dashboard").style.display = "none";
-      document.getElementById("login-page").style.display = "flex";
-      document.getElementById("studentId").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("rememberMe").checked = false;
-    }
+    // 模擬上次登入時間 (實際可改成從資料庫或後端取得)
+    const lastLoginTime = "2025/09/12 20:30"; 
+    document.getElementById('lastLogin').textContent = "上次登入時間：" + lastLoginTime;
   </script>
 </body>
 </html>
