@@ -91,7 +91,8 @@
       margin: 10px 0 20px;
       font-size: 14px;
       color: #333;
-      justify-content: flex-start;
+      justify-content: flex-start; /*靠左對齊*/
+      width: 100%;
     }
 
     .login-card button {
@@ -114,6 +115,11 @@
       width: 100%;
     }
     #dashboard h2 { margin: 0 0 10px 0; }
+    #lastLogin {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+    }
     .exam {
       margin: 10px 0; border: 1px solid #ddd;
       border-radius: 8px; overflow: hidden;
@@ -166,6 +172,7 @@
   <!-- 登入後頁 -->
   <div id="dashboard">
     <h2 id="welcome"></h2>
+    <div id="lastLogin"></div>
     <p>注意！本系統只會保留當期課程成績！</p>
     <details class="exam"><summary>德文第一次段考</summary><p id="exam1"></p></details>
     <details class="exam"><summary>德文第二次段考</summary><p id="exam2"></p></details>
@@ -202,7 +209,10 @@
       const pw = document.getElementById("password").value;
       const remember = document.getElementById("rememberMe").checked;
       if (students[id] && students[id].password === pw) {
-        if (remember) localStorage.setItem("studentId", id);
+        if (remember) {
+          localStorage.setItem("studentId", id);
+          localStorage.setItem("lastLoginTime", new Date().toLocaleString());
+        }
         showDashboard(id);
       } else {
         alert("學號或密碼錯誤！");
@@ -219,6 +229,8 @@
       document.getElementById("login-page").style.display = "none";
       document.getElementById("dashboard").style.display = "flex";
       document.getElementById("welcome").innerText = `${id} ${students[id].name} 您好，歡迎！`;
+      const lastTime = localStorage.getItem("lastLoginTime");
+      document.getElementById("lastLogin").innerText = lastTime ? `上次登入時間：${lastTime}` : "";
       document.getElementById("exam1").innerText = students[id].scores[0] || "沒有成績";
       document.getElementById("exam2").innerText = students[id].scores[1] || "沒有成績";
       document.getElementById("exam3").innerText = students[id].scores[2] || "沒有成績";
@@ -228,6 +240,7 @@
     function logout() {
       // 重置背景 & 回到登入頁
       localStorage.removeItem("studentId");
+      //保留上次登入時間不刪除
       document.body.style.background = 'url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover';
       document.getElementById("dashboard").style.display = "none";
       document.getElementById("login-page").style.display = "flex";
