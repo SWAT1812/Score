@@ -9,7 +9,10 @@
       margin: 0;
       font-family: "Segoe UI", Arial, sans-serif;
       background: url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover;
-      height: 100vh; display: flex; align-items: center; justify-content: center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 16px;
     }
     #login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;}
@@ -20,7 +23,7 @@
     .checkbox-row label{display:flex;align-items:center;gap:6px;font-size:14px;color:#333;}
     .login-card button{width:100%;padding:12px;border:none;border-radius:8px;background:#0078d7;color:white;cursor:pointer;font-size:16px;}
     .login-card button:hover{background:#005fa3;}
-    #dashboard{display:none;flex-direction:column;padding:20px;background:#fff;height:100vh;width:100%;box-sizing:border-box;position:relative;}
+    #dashboard{display:none;flex-direction:column;padding:20px;background:rgba(255,255,255,0.8);backdrop-filter:blur(5px);height:100vh;width:100%;box-sizing:border-box;position:relative;}
     #dashboard h2{margin:0 0 10px 0;}
     #lastLogin,#lastLoginLoginPage{font-size:14px;color:#555;margin-bottom:10px;text-align:left;}
     .exam{margin:10px 0;border:1px solid #ddd;border-radius:8px;overflow:hidden;}
@@ -139,23 +142,12 @@ function logout(){
 function openSettings(){document.getElementById("settingsModal").style.display="flex";document.getElementById("fontSizeInput").value=parseInt(getComputedStyle(document.body).fontSize);}
 function closeSettings(){document.getElementById("settingsModal").style.display="none";}
 function showTab(tab){document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));document.getElementById(tab).classList.add("active");}
-function applyGeneral(){
-  const fs=document.getElementById("fontSizeInput").value;
-  localStorage.setItem("fontSize",fs);
-  applySettings();
-}
-function applyPersonal(){
-  const bg=document.getElementById("bgSelect").value;
-  localStorage.setItem("background",bg);
-  applySettings();
-}
-function resetDefaults(){
-  localStorage.removeItem("fontSize");localStorage.removeItem("background");
-  applySettings();
-}
+function applyGeneral(){const fs=document.getElementById("fontSizeInput").value;localStorage.setItem("fontSize",fs);applySettings();}
+function applyPersonal(){const bg=document.getElementById("bgSelect").value;localStorage.setItem("background",bg);applySettings();}
+function resetDefaults(){localStorage.removeItem("fontSize");localStorage.removeItem("background");applySettings();}
 function applySettings(){
   const fs=localStorage.getItem("fontSize");
-  if(fs)document.body.style.fontSize=fs+"px";else document.body.style.fontSize="16px";
+  document.body.style.fontSize=fs?fs+"px":"16px";
   const bg=localStorage.getItem("background");
   if(bg==="black"){document.body.style.backgroundColor="#000";document.body.style.backgroundImage="";}
   else if(bg){document.body.style.background=`url(${bg}) no-repeat center center/cover`;}
