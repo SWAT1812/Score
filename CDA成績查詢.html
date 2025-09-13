@@ -121,7 +121,7 @@
       background:#fff;
       padding:20px;
       border-radius:16px;
-      width:320px;
+      width:360px;
       max-height:80vh;
       overflow-y:auto;
       box-shadow:0 8px 24px rgba(0,0,0,0.3);
@@ -160,6 +160,23 @@
     .settings-content button:hover{background:#005fa3;}
     .settings-content label{font-size:14px;}
     .settings-content select,input[type="number"]{width:100%;padding:6px;border-radius:6px;border:1px solid #ccc;}
+    /* 個人化圖片選擇 */
+    #bgImages{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:8px;
+    }
+    #bgImages img{
+      width:60px;
+      height:60px;
+      border:2px solid #ccc;
+      border-radius:8px;
+      cursor:pointer;
+      object-fit:cover;
+      transition: border 0.3s;
+    }
+    #bgImages img.selected{border-color:#0078d7;}
   </style>
 </head>
 <body>
@@ -203,15 +220,14 @@
       </div>
       <div id="personal" class="tab-content">
         <label>選擇背景：</label>
-        <select id="bgSelect">
-          <option value="">無背景</option>
-          <option value="black">黑色背景</option>
-          <option value="https://images.pexels.com/photos/748992/pexels-photo-748992.jpeg">圖片1</option>
-          <option value="https://images.pexels.com/photos/1496372/pexels-photo-1496372.jpeg">圖片2</option>
-          <option value="https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg">圖片3</option>
-          <option value="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg">圖片4</option>
-        </select>
-        <button onclick="applyPersonal()">套用</button>
+        <div id="bgImages">
+          <img src="" alt="無背景" data-bg="">
+          <img src="https://images.pexels.com/photos/748992/pexels-photo-748992.jpeg" data-bg="https://images.pexels.com/photos/748992/pexels-photo-748992.jpeg">
+          <img src="https://images.pexels.com/photos/1496372/pexels-photo-1496372.jpeg" data-bg="https://images.pexels.com/photos/1496372/pexels-photo-1496372.jpeg">
+          <img src="https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg" data-bg="https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg">
+          <img src="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg" data-bg="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg">
+          <img src="black" alt="黑色背景" data-bg="black" style="background:#000">
+        </div>
         <button onclick="resetDefaults()">重設為預設值</button>
       </div>
       <div id="security" class="tab-content">
@@ -275,6 +291,7 @@ function logout(){
 function openSettings(){
   document.getElementById("settingsModal").style.display="flex";
   document.getElementById("fontSizeInput").value=parseInt(getComputedStyle(document.body).fontSize);
+  highlightSelectedBg();
 }
 
 function closeSettings(){document.getElementById("settingsModal").style.display="none";}
@@ -292,12 +309,6 @@ function applyGeneral(){
   applySettings();
 }
 
-function applyPersonal(){
-  const bg=document.getElementById("bgSelect").value;
-  localStorage.setItem("background",bg);
-  applySettings();
-}
-
 function resetDefaults(){
   localStorage.removeItem("fontSize");
   localStorage.removeItem("background");
@@ -308,7 +319,6 @@ function applySettings(){
   const fs=localStorage.getItem("fontSize");
   document.body.style.fontSize=fs?fs+"px":"16px";
   const bg=localStorage.getItem("background");
-
   if(bg==="black"){
     document.body.style.backgroundColor="#000";
     document.body.style.backgroundImage="";
@@ -324,6 +334,7 @@ function applySettings(){
     document.body.style.background='url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover';
     setDashboardTextColor("#333");
   }
+  highlightSelectedBg();
 }
 
 function setDashboardTextColor(color){
@@ -333,6 +344,26 @@ function setDashboardTextColor(color){
 }
 
 function clearRemember(){localStorage.removeItem("studentId");alert("已清除保持登入資料");}
+
+/* 個人化圖片點擊套用 */
+const bgImages = document.querySelectorAll("#bgImages img");
+bgImages.forEach(img=>{
+  img.addEventListener("click", ()=>{
+    bgImages.forEach(i=>i.classList.remove("selected"));
+    img.classList.add("selected");
+    const bg = img.getAttribute("data-bg");
+    localStorage.setItem("background", bg);
+    applySettings();
+  });
+});
+
+function highlightSelectedBg(){
+  const currentBg = localStorage.getItem("background")||"";
+  bgImages.forEach(img=>{
+    if(img.getAttribute("data-bg")===currentBg) img.classList.add("selected");
+    else img.classList.remove("selected");
+  });
+}
 </script>
 </body>
 </html>
