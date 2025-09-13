@@ -83,10 +83,9 @@
       width:100%;
       box-sizing:border-box;
       position:relative;
-      color:#333;
     }
     #dashboard h2{margin:0 0 10px 0;}
-    #lastLogin,#lastLoginLoginPage{font-size:14px;color:#555;margin-bottom:10px;text-align:left;}
+    #lastLogin,#lastLoginLoginPage{font-size:14px;margin-bottom:10px;text-align:left;}
     .exam{margin:10px 0;border:1px solid #ddd;border-radius:8px;overflow:hidden;background:#fff;}
     .exam summary{background:#f5f5f5;padding:10px;cursor:pointer;font-weight:bold;}
     .exam p{margin:10px;}
@@ -270,7 +269,7 @@ function logout(){
   document.getElementById("rememberMe").checked=false;
   const lastTime=localStorage.getItem("lastLoginTime");
   document.getElementById("lastLoginLoginPage").innerText=lastTime?`上次登入時間：${lastTime}`:"";
-  document.body.style.background='url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover';
+  applySettings();
 }
 
 function openSettings(){
@@ -309,14 +308,28 @@ function applySettings(){
   const fs=localStorage.getItem("fontSize");
   document.body.style.fontSize=fs?fs+"px":"16px";
   const bg=localStorage.getItem("background");
+
   if(bg==="black"){
     document.body.style.backgroundColor="#000";
     document.body.style.backgroundImage="";
+    setDashboardTextColor("white");
   } else if(bg){
     document.body.style.background=`url(${bg}) no-repeat center center/cover`;
+    if(bg!=="" && bg!=="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg"){
+      setDashboardTextColor("white");
+    } else {
+      setDashboardTextColor("#333");
+    }
   } else {
     document.body.style.background='url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover';
+    setDashboardTextColor("#333");
   }
+}
+
+function setDashboardTextColor(color){
+  const dashboardTexts = ["welcome","lastLogin"];
+  dashboardTexts.forEach(id => document.getElementById(id).style.color=color);
+  document.querySelectorAll("#dashboard p").forEach(p=>p.style.color=color);
 }
 
 function clearRemember(){localStorage.removeItem("studentId");alert("已清除保持登入資料");}
