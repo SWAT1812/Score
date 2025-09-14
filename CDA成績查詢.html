@@ -5,63 +5,20 @@
 <title>成績查詢系統</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body{
-    margin:0;
-    font-family:"Segoe UI",Arial,sans-serif;
-    background:url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover;
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
   }
-  /* 授權頁 */
-  #license-page{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    width:100%;
-    height:100%;
-  }
-  .license-card{
-    background:rgba(255,255,255,0.95);
-    padding:30px;
-    border-radius:16px;
-    max-width:360px;
-    width:90%;
-    box-shadow:0 6px 20px rgba(0,0,0,0.2);
-    text-align:center;
-  }
-  .license-card h2{color:#333;margin-bottom:10px;}
-  .license-card p{font-size:14px;color:#555;margin-bottom:15px;}
-  .license-card input{
-    display:block;
-    margin:10px auto;
-    padding:12px;
-    width:100%;
-    border:1px solid #ccc;
-    border-radius:8px;
-    box-sizing:border-box;
-    font-size:15px;
-    text-transform:uppercase;
-  }
-  .license-card button{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#0078d7;
-    color:white;
-    cursor:pointer;
-    font-size:16px;
-    transition:background 0.3s;
-  }
-  .license-card button:hover{background:#005fa3;}
 
   /* 登入頁 */
   #login-page{
-    display:none;
+    display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
@@ -131,7 +88,7 @@
   #lastLogin,#lastLoginLoginPage{font-size:14px;margin-bottom:10px;text-align:left;}
   .exam{margin:10px 0;border:1px solid #ddd;border-radius:8px;overflow:hidden;background:#fff;}
   .exam summary{background:#f5f5f5;padding:10px;cursor:pointer;font-weight:bold;}
-  .exam p{margin:10px;color:#000;}
+  .exam p{margin:10px;color:#000;} /* 成績欄位文字永遠黑色 */
   #logout-btn{margin-top:auto;padding:12px 20px;border:none;border-radius:8px;background:#e74c3c;color:#fff;font-size:16px;cursor:pointer;align-self:flex-start;transition: background 0.3s;}
   #logout-btn:hover{background:#c0392b;}
   #settingsBtn{
@@ -148,19 +105,81 @@
     transition: background 0.3s;
   }
   #settingsBtn:hover{background:#005fa3;}
+
+  /* 設定視窗 */
+  #settingsModal{
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+  }
+  .settings-content{
+    background:#fff;
+    padding:20px;
+    border-radius:16px;
+    width:360px;
+    max-height:80vh;
+    overflow-y:auto;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .tab-buttons{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .tab-buttons button{
+    flex:1;
+    margin:0 2px;
+    padding:8px 0;
+    border:none;
+    border-radius:8px;
+    background:#eee;
+    cursor:pointer;
+    transition: background 0.3s;
+  }
+  .tab-buttons button:hover{background:#ddd;}
+  .tab-buttons button.active{background:#0078d7;color:#fff;}
+  .tab-content{display:none;flex-direction:column;gap:8px;}
+  .tab-content.active{display:flex;}
+  .settings-content button{
+    padding:8px;
+    border:none;
+    border-radius:8px;
+    background:#0078d7;
+    color:#fff;
+    cursor:pointer;
+    transition: background 0.3s;
+  }
+  .settings-content button:hover{background:#005fa3;}
+  .settings-content label{font-size:14px;}
+  .settings-content select,input[type="number"]{width:100%;padding:6px;border-radius:6px;border:1px solid #ccc;}
+  /* 個人化圖片選擇 */
+  #bgImages{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:8px;
+  }
+  #bgImages img{
+    width:60px;
+    height:60px;
+    border:2px solid #ccc;
+    border-radius:8px;
+    cursor:pointer;
+    object-fit:cover;
+    transition: border 0.3s;
+  }
+  #bgImages img.selected{border-color:#0078d7;}
 </style>
 </head>
 <body>
-  <!--授權頁-->
-  <div id="license-page">
-    <div class="license-card">
-      <h2>輸入產品授權碼</h2>
-      <p>您必須先取得授權才可繼續使用此系統</p>
-      <input type="text" id="licenseInput" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" maxlength="23">
-      <button onclick="checkLicense()">確認</button>
-    </div>
-  </div>
-
   <!--登入頁-->
   <div id="login-page">
     <div class="login-card">
@@ -175,7 +194,7 @@
 
   <!--登入後頁-->
   <div id="dashboard">
-    <button id="settingsBtn" onclick="alert('設定視窗略')">設定</button>
+    <button id="settingsBtn" onclick="openSettings()">設定</button>
     <h2 id="welcome"></h2>
     <div id="lastLogin"></div>
     <p>注意！本系統只會保留當期課程成績！</p>
@@ -186,6 +205,38 @@
     <button id="logout-btn" onclick="logout()">登出</button>
   </div>
 
+  <!--設定視窗-->
+  <div id="settingsModal">
+    <div class="settings-content">
+      <div class="tab-buttons">
+        <button class="active" onclick="showTab('general', this)">一般設定</button>
+        <button onclick="showTab('personal', this)">個人化</button>
+        <button onclick="showTab('security', this)">安全性</button>
+      </div>
+      <div id="general" class="tab-content active">
+        <label>字體大小(px)：<input type="number" id="fontSizeInput" min="12" max="30"></label>
+        <button onclick="applyGeneral()">套用</button>
+        <button onclick="resetDefaults()">重設為預設值</button>
+      </div>
+      <div id="personal" class="tab-content">
+        <label>選擇背景：</label>
+        <div id="bgImages">
+          <img src="https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56" alt="預設" data-bg="">
+          <img src="https://images.pexels.com/photos/748992/pexels-photo-748992.jpeg" data-bg="https://images.pexels.com/photos/748992/pexels-photo-748992.jpeg">
+          <img src="https://images.pexels.com/photos/1496372/pexels-photo-1496372.jpeg" data-bg="https://images.pexels.com/photos/1496372/pexels-photo-1496372.jpeg">
+          <img src="https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg" data-bg="https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg">
+          <img src="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg" data-bg="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg">
+          <img src="https://img.freepik.com/premium-photo/dark-photo-dark-background-with-black-background-with-text-no-it_994023-512732.jpg" alt="" data-bg="https://img.freepik.com/premium-photo/dark-photo-dark-background-with-black-background-with-text-no-it_994023-512732.jpg" style="background:#000">
+        </div>
+        <button onclick="resetDefaults()">重設為預設值</button>
+      </div>
+      <div id="security" class="tab-content">
+        <button onclick="clearRemember()">清除保持登入資料</button>
+      </div>
+      <button onclick="closeSettings()">關閉</button>
+    </div>
+  </div>
+
 <script>
 const students={
  "11401":{name:"蔡馥卉",password:"11401",scores:["尚無成績","尚無成績","查無此項目","查無此項目"]},
@@ -194,41 +245,13 @@ const students={
  "11404":{name:"王定盛",password:"11404",scores:["尚無成績","尚無成績","查無此項目","查無此項目"]}
 };
 
-const validLicenses=[
- "00352-20342-21071-ACODM",
- "00721-80142-54002-BAOKL",
- "00873-10292-55089-UAOFX",
- "00410-30662-17030-QAWOP"
-];
-
 window.addEventListener("load",()=>{
-  //限制輸入字元
-  document.getElementById("licenseInput").addEventListener("input",e=>{
-    e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9\-]/g,'');
-  });
-  //檢查localStorage授權
-  if(localStorage.getItem("licenseKey")){
-    showLogin();
-  }
   const savedId=localStorage.getItem("studentId");
   const lastTime=localStorage.getItem("lastLoginTime");
   document.getElementById("lastLoginLoginPage").innerText=lastTime?`上次登入時間：${lastTime}`:"";
+  applySettings();
+  if(savedId&&students[savedId])autoLogin(savedId);
 });
-
-function checkLicense(){
-  const key=document.getElementById("licenseInput").value.trim();
-  if(validLicenses.includes(key)){
-    localStorage.setItem("licenseKey",key);
-    showLogin();
-  }else{
-    alert("授權碼錯誤！");
-  }
-}
-
-function showLogin(){
-  document.getElementById("license-page").style.display="none";
-  document.getElementById("login-page").style.display="flex";
-}
 
 function login(){
   const id=document.getElementById("studentId").value.trim();
@@ -241,6 +264,8 @@ function login(){
   }else alert("學號或密碼錯誤！");
 }
 
+function autoLogin(id){showDashboard(id);}
+
 function showDashboard(id){
   document.getElementById("login-page").style.display="none";
   document.getElementById("dashboard").style.display="flex";
@@ -248,6 +273,7 @@ function showDashboard(id){
   const lastTime=localStorage.getItem("lastLoginTime");
   document.getElementById("lastLogin").innerText=lastTime?`上次登入時間：${lastTime}`:"";
   ["exam1","exam2","exam3","exam4"].forEach((e,i)=>{document.getElementById(e).innerText=students[id].scores[i]||"沒有成績";});
+  applySettings();
 }
 
 function logout(){
@@ -259,6 +285,114 @@ function logout(){
   document.getElementById("rememberMe").checked=false;
   const lastTime=localStorage.getItem("lastLoginTime");
   document.getElementById("lastLoginLoginPage").innerText=lastTime?`上次登入時間：${lastTime}`:"";
+  applySettings();
+}
+
+function openSettings(){
+  document.getElementById("settingsModal").style.display="flex";
+  document.getElementById("fontSizeInput").value=parseInt(getComputedStyle(document.body).fontSize);
+  highlightSelectedBg();
+}
+
+function closeSettings(){document.getElementById("settingsModal").style.display="none";}
+
+function showTab(tab, btn){
+  document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-buttons button").forEach(b=>b.classList.remove("active"));
+  document.getElementById(tab).classList.add("active");
+  btn.classList.add("active");
+}
+
+function applyGeneral(){
+  const fs=document.getElementById("fontSizeInput").value;
+  localStorage.setItem("fontSize",fs);
+  applySettings();
+}
+
+function resetDefaults(){
+  localStorage.removeItem("fontSize");
+  localStorage.removeItem("background");
+  applySettings();
+}
+
+// 核心設定函式，文字自動調色
+function applySettings(){
+  const fs = localStorage.getItem("fontSize");
+  document.body.style.fontSize = fs ? fs + "px" : "16px";
+  const bg = localStorage.getItem("background");
+
+  if(bg === "black"){
+    document.body.style.backgroundColor = "#000";
+    document.body.style.backgroundImage = "";
+    setDashboardTextColor("white");
+  } else if(bg){
+    document.body.style.background = `url(${bg}) no-repeat center center/cover`;
+    isDarkBackground(bg).then(isDark => {
+      setDashboardTextColor(isDark ? "white" : "#333");
+    });
+  } else {
+    document.body.style.background='url("https://0a5327dc56.cbaul-cdnwnd.com/35e8080a070944ae6e806799605ee5ed/200000012-2ac3d2ac3f/image-crop-1iug6n-7.webp?ph=0a5327dc56") no-repeat center center/cover';
+    setDashboardTextColor("#333");
+  }
+  highlightSelectedBg();
+}
+
+// 設定文字顏色，成績欄位永遠黑色
+function setDashboardTextColor(color){
+  const dashboardTexts = ["welcome","lastLogin"];
+  dashboardTexts.forEach(id => document.getElementById(id).style.color = color);
+  // 成績欄位文字永遠黑色
+  document.querySelectorAll(".exam p").forEach(p => p.style.color = "#000");
+  document.querySelectorAll("#dashboard p:not(.exam p)").forEach(p => p.style.color = color);
+}
+
+// 簡單判斷圖片是深色或淺色
+function isDarkBackground(imgUrl){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = imgUrl;
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img,0,0,img.width,img.height);
+      const imageData = ctx.getImageData(0,0,img.width,img.height).data;
+      let total=0,count=0;
+      for(let i=0;i<imageData.length;i+=4){
+        const r=imageData[i], g=imageData[i+1], b=imageData[i+2];
+        const brightness = (0.299*r + 0.587*g + 0.114*b);
+        total += brightness;
+        count++;
+      }
+      const avg = total/count;
+      resolve(avg<128);
+    };
+    img.onerror = ()=>resolve(false);
+  });
+}
+
+function clearRemember(){localStorage.removeItem("studentId");alert("已清除保持登入資料");}
+
+/* 個人化圖片點擊套用 */
+const bgImages = document.querySelectorAll("#bgImages img");
+bgImages.forEach(img=>{
+  img.addEventListener("click", ()=>{
+    bgImages.forEach(i=>i.classList.remove("selected"));
+    img.classList.add("selected");
+    const bg = img.getAttribute("data-bg");
+    localStorage.setItem("background", bg);
+    applySettings();
+  });
+});
+
+function highlightSelectedBg(){
+  const currentBg = localStorage.getItem("background")||"";
+  bgImages.forEach(img=>{
+    if(img.getAttribute("data-bg")===currentBg) img.classList.add("selected");
+    else img.classList.remove("selected");
+  });
 }
 </script>
 </body>
