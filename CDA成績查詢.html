@@ -16,9 +16,22 @@
     font-size: 16px;
   }
 
+  /* 授權碼頁 */
+  #license-page{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    height:100vh;
+  }
+  #license-page .login-card{
+    max-width:360px;
+  }
+
   /* 登入頁 */
   #login-page{
-    display:flex;
+    display:none;
     flex-direction:column;
     align-items:center;
     justify-content:center;
@@ -180,6 +193,16 @@
 </style>
 </head>
 <body>
+  <!--授權碼頁-->
+  <div id="license-page">
+    <div class="login-card">
+      <h2>輸入產品授權碼</h2>
+      <p>您必須先取得授權才可繼續使用此系統</p>
+      <input type="text" id="licenseKey" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" maxlength="23">
+      <button onclick="checkLicense()">確認</button>
+    </div>
+  </div>
+
   <!--登入頁-->
   <div id="login-page">
     <div class="login-card">
@@ -245,12 +268,47 @@ const students={
  "11404":{name:"王定盛",password:"11404",scores:["尚無成績","尚無成績","查無此項目","查無此項目"]}
 };
 
+// 允許的授權碼
+const validKeys=[
+  "00352-20342-21071-ACODM",
+  "00721-80142-54002-BAOKL",
+  "00873-10292-55089-UAOFX",
+  "00410-30662-17030-QAWOP"
+];
+
 window.addEventListener("load",()=>{
+  // 先檢查授權碼
+  const savedKey=localStorage.getItem("licenseKey");
+  if(savedKey && validKeys.includes(savedKey)){
+    document.getElementById("license-page").style.display="none";
+    document.getElementById("login-page").style.display="flex";
+  }else{
+    document.getElementById("license-page").style.display="flex";
+    document.getElementById("login-page").style.display="none";
+  }
+
   const savedId=localStorage.getItem("studentId");
   const lastTime=localStorage.getItem("lastLoginTime");
   document.getElementById("lastLoginLoginPage").innerText=lastTime?`上次登入時間：${lastTime}`:"";
   applySettings();
   if(savedId&&students[savedId])autoLogin(savedId);
+});
+
+// 授權碼檢查
+function checkLicense(){
+  const key=document.getElementById("licenseKey").value.trim();
+  if(validKeys.includes(key)){
+    localStorage.setItem("licenseKey",key);
+    document.getElementById("license-page").style.display="none";
+    document.getElementById("login-page").style.display="flex";
+  }else{
+    alert("授權碼錯誤！");
+  }
+}
+
+// 限制輸入只能大寫英數及-符號
+document.getElementById("licenseKey").addEventListener("input",function(e){
+  this.value=this.value.toUpperCase().replace(/[^A-Z0-9\-]/g,"").slice(0,23);
 });
 
 function login(){
@@ -342,58 +400,73 @@ function setDashboardTextColor(color){
   const dashboardTexts = ["welcome","lastLogin"];
   dashboardTexts.forEach(id => document.getElementById(id).style.color = color);
   // 成績欄位文字永遠黑色
-  document.querySelectorAll(".exam p").forEach(p => p.style.color = "#000");
-  document.querySelectorAll("#dashboard p:not(.exam p)").forEach(p => p.style.color = color);
+  ["exam1","exam2","exam3","exam4"].forEach(e => document.getElementById(e).style.color = "#000");
 }
 
-// 簡單判斷圖片是深色或淺色
-function isDarkBackground(imgUrl){
-  return new Promise(resolve => {
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = imgUrl;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img,0,0,img.width,img.height);
-      const imageData = ctx.getImageData(0,0,img.width,img.height).data;
-      let total=0,count=0;
-      for(let i=0;i<imageData.length;i+=4){
-        const r=imageData[i], g=imageData[i+1], b=imageData[i+2];
-        const brightness = (0.299*r + 0.587*g + 0.114*b);
-        total += brightness;
-        count++;
-      }
-      const avg = total/count;
-      resolve(avg<128);
+// 判斷背景是否偏暗
+function isDarkBackground(url){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.crossOrigin="Anonymous";
+    img.src=url;
+    img.onload=()=>{
+      const canvas=document.createElement("canvas");
+      canvas.width=img.width; canvas.height=img.height;
+      const ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0);
+      const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+      let r=0,g=0,b=0,count=0;
+      for(let i=0;i<data.length;i+=4){r+=data[i];g+=data[i+1];b+=data[i+2];count++;}
+      r/=count;g/=count;b/=count;
+      const brightness=(r*299+g*587+b*114)/1000;
+      resolve(brightness<128);
     };
-    img.onerror = ()=>resolve(false);
+    img.onerror=()=>resolve(false);
   });
 }
 
-function clearRemember(){localStorage.removeItem("studentId");alert("已清除保持登入資料");}
-
-/* 個人化圖片點擊套用 */
-const bgImages = document.querySelectorAll("#bgImages img");
-bgImages.forEach(img=>{
-  img.addEventListener("click", ()=>{
-    bgImages.forEach(i=>i.classList.remove("selected"));
-    img.classList.add("selected");
-    const bg = img.getAttribute("data-bg");
-    localStorage.setItem("background", bg);
+// 背景圖片點擊選擇
+document.querySelectorAll("#bgImages img").forEach(img=>{
+  img.addEventListener("click",()=>{
+    const bg=img.getAttribute("data-bg");
+    localStorage.setItem("background",bg?bg:"");
     applySettings();
   });
 });
 
 function highlightSelectedBg(){
-  const currentBg = localStorage.getItem("background")||"";
-  bgImages.forEach(img=>{
-    if(img.getAttribute("data-bg")===currentBg) img.classList.add("selected");
+  const bg=localStorage.getItem("background")||"";
+  document.querySelectorAll("#bgImages img").forEach(img=>{
+    if((img.getAttribute("data-bg")||"")==bg)img.classList.add("selected");
     else img.classList.remove("selected");
   });
 }
+
+function clearRemember(){
+  localStorage.removeItem("studentId");
+  alert("保持登入資料已清除");
+}
+
+// ====== 禁用右鍵與 F12 ======
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault();
+  alert('本系統已禁用右鍵選單');
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key==='F12' || e.keyCode===123){ // F12
+    e.preventDefault();
+    alert('本系統已禁用開發者工具');
+  }
+  if(e.ctrlKey && e.shiftKey && (e.key==='I' || e.key==='J')){ // Ctrl+Shift+I / J
+    e.preventDefault();
+    alert('本系統已禁用開發者工具');
+  }
+  if(e.ctrlKey && e.key.toUpperCase()==='U'){ // Ctrl+U
+    e.preventDefault();
+    alert('本系統已禁用檢視原始碼');
+  }
+});
 </script>
 </body>
 </html>
