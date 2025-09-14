@@ -450,23 +450,24 @@ function clearRemember(){
 // ====== 禁用右鍵與 F12 ======
 document.addEventListener('contextmenu', function(e){
   e.preventDefault();
-  alert('本系統已禁用右鍵選單');
+  alert('Unable to execute the request! Reason: Function is disabled');
 });
 
 document.addEventListener('keydown', function(e){
   if(e.key==='F12' || e.keyCode===123){ // F12
     e.preventDefault();
-    alert('本系統已禁用開發者工具');
+    alert('Unable to execute the request! Reason: Function is disabled');
   }
   if(e.ctrlKey && e.shiftKey && (e.key==='I' || e.key==='J')){ // Ctrl+Shift+I / J
     e.preventDefault();
-    alert('本系統已禁用開發者工具');
+    alert('Unable to execute the request! Reason: Function is disabled');
   }
   if(e.ctrlKey && e.key.toUpperCase()==='U'){ // Ctrl+U
     e.preventDefault();
-    alert('本系統已禁用檢視原始碼');
+    alert('Unable to execute the request! Reason: Function is disabled');
   }
 });
 </script>
 </body>
 </html>
+
