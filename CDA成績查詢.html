@@ -212,7 +212,7 @@ function showDashboard(id){
   currentUser=id;
   document.getElementById("login-page").style.display="none";
   document.getElementById("dashboard").style.display="flex";
-  document.getElementById("welcome").innerText=`${id} ${students[id].name} 您好，歡迎！`;
+  document.getElementById("welcome").innerText=`${id} ${students[id].name} 歡迎！`;
   const lastTime=localStorage.getItem("lastLoginTime");
   document.getElementById("lastLogin").innerText=lastTime?`上次登入時間：${lastTime}`:"";
   ["exam1","exam2","exam3","exam4"].forEach((e,i)=>{document.getElementById(e).innerText=students[id].scores[i]||"沒有成績";});
@@ -270,4 +270,5 @@ document.addEventListener('keydown',function(e){ if(e.key==='F12'||e.keyCode===1
 </script>
 </body>
 </html>
+
 
